@@ -10,7 +10,7 @@ export function pieceofcake2Container(md) {
     render(tokens, idx) {
       const token = tokens[idx]
       if (token.nesting === 1) {
-        const title = token.info.trim().slice('pieceofcake2'.length).trim() || 'pieceofcake2 fork'
+        const title = token.info.trim().slice('pieceofcake2'.length).trim() || 'Piece of Cake 2 fork'
         return `<div class="pieceofcake2 custom-block"><p class="custom-block-title">${md.utils.escapeHtml(title)}</p>\n`
       }
       return '</div>\n'
