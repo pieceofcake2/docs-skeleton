@@ -1,18 +1,19 @@
 # Piece of Cake 2 Documentation Skeleton
 
-A [VitePress](https://vitepress.dev/) based documentation skeleton for
-[Piece of Cake 2](https://github.com/pieceofcake2) documentation sites.
+A [VitePress](https://vitepress.dev/) based documentation skeleton used by the
+[Piece of Cake 2](https://github.com/pieceofcake2) project, which maintains
+community forks of CakePHP 2.x and its plugins.
 
 This is a fork of [cakephp/docs-skeleton](https://github.com/cakephp/docs-skeleton)
 with the following changes:
 
 - Piece of Cake 2 logo, favicons and footer
 - Analytics (Simple Analytics, Google Analytics) removed
-- `::: pieceofcake2` container to mark content specific to Piece of Cake 2
+- `::: pieceofcake2` container to mark content specific to the pieceofcake2 forks
 
 ```md
 ::: pieceofcake2
-Piece of Cake 2 requires PHP 8.0 or newer.
+pieceofcake2/cakephp requires PHP 8.0 or newer.
 :::
 ```
 
