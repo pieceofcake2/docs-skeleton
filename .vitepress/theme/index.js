@@ -1,6 +1,5 @@
 import DefaultTheme from 'vitepress/theme-without-fonts'
 import PageLoader from "./components/PageLoader.vue";
-import SimpleAnalyticsBadge from "./components/SimpleAnalyticsBadge.vue";
 import VersionBanner from "./components/VersionBanner.vue";
 import './custom.css'
 import { h } from "vue";
@@ -13,7 +12,6 @@ export default {
         h(PageLoader),
         h(VersionBanner),
       ],
-      'aside-outline-after': () => h(SimpleAnalyticsBadge),
     })
   }
 }
