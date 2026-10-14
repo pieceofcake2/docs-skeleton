@@ -1,4 +1,4 @@
-# Piece of Cake 2 Documentation Skeleton
+# pieceofcake2/docs-skeleton
 
 A [VitePress](https://vitepress.dev/) based documentation skeleton used by the
 [Piece of Cake 2](https://github.com/pieceofcake2) project, which maintains
