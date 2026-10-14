@@ -38,15 +38,18 @@ function pluginGroups({ locale, current }) {
   const lang = locale === 'root' ? 'en' : locale
   const prefix = locale === 'root' ? '' : `${locale}/`
 
+  // Menu labels drop the vendor prefix (every package is pieceofcake2/*).
+  const shortName = (item) => item.package.replace(/^[^/]+\//, '')
+
   const entry = (item) => {
     if (item.repo === current) {
       // This site: a link within it, highlighted on every page.
-      return { text: item.package, link: '/', activeMatch: '^/' }
+      return { text: shortName(item), link: '/', activeMatch: '^/' }
     }
 
     const url = docsUrl(item)
 
-    return { text: item.package, ...sameOrigin(url === bookUrl ? `${bookUrl}${prefix}` : url) }
+    return { text: shortName(item), ...sameOrigin(url === bookUrl ? `${bookUrl}${prefix}` : url) }
   }
 
   return groups

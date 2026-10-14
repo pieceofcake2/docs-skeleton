@@ -155,9 +155,13 @@ export default async ({ bookNav, bookUrl }) => {
     'Not affiliated with the Cake Software Foundation.',
   ].filter(Boolean).join(' ')
 
+  // The site title drops the vendor prefix so it fits the sidebar; the banner
+  // and description keep the full package name.
+  const siteTitle = title.replace(/^[^/]+\//, '')
+
   return {
     base: `/${repo}/`,
-    title,
+    title: siteTitle,
     description: composer.description || `Documentation for ${title}`,
     rewrites: toRoute,
     sitemap: {
