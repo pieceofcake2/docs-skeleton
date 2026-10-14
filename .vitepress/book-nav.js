@@ -9,18 +9,19 @@ import { groups, docsUrl } from './packages.js'
 export const siteUrl = 'https://pieceofcake2.github.io/'
 export const bookUrl = `${siteUrl}docs/`
 
-const links = {
+const links = (label) => ({
   text: 'Links',
   items: [
     { text: 'pieceofcake2/cakephp', link: 'https://github.com/pieceofcake2/cakephp' },
     { text: 'Packagist', link: 'https://packagist.org/packages/pieceofcake2/cakephp' },
+    { text: label.api, link: 'https://api.cakephp.org/2.10/' },
     { text: 'CakePHP 5.x (official)', link: 'https://book.cakephp.org/5/en/' },
   ],
-}
+})
 
 const labels = {
-  root: { home: 'Home', gettingStarted: 'Getting Started', documentation: 'Documentation', plugins: 'Plugins' },
-  ja: { home: 'ホーム', gettingStarted: 'はじめに', documentation: 'ドキュメント', plugins: 'プラグイン' },
+  root: { home: 'Home', gettingStarted: 'Getting Started', documentation: 'Documentation', plugins: 'Plugins', api: 'CakePHP 2.10 API (original)' },
+  ja: { home: 'ホーム', gettingStarted: 'はじめに', documentation: 'ドキュメント', plugins: 'プラグイン', api: 'CakePHP 2.10 API (オリジナル)' },
 }
 
 /**
@@ -83,9 +84,8 @@ export function bookNav({ locale = 'root', absolute = false, current = undefined
   return [
     { text: label.home, ...home },
     { text: label.gettingStarted, ...page('getting-started') },
-    { text: 'API', link: 'https://api.cakephp.org/2.10/' },
     { text: label.documentation, ...page('') },
     { text: label.plugins, ...(onPluginSite ? { activeMatch: '^/' } : {}), items: plugins },
-    { ...links, items: links.items.map((item) => ({ ...item })) },
+    links(label),
   ]
 }
