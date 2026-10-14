@@ -84,6 +84,7 @@ export const groups = [
         ja: "インフラ",
         items: [
           { repo: "aws", package: "pieceofcake2/aws", en: "AWS SDK integration", ja: "AWS SDK との連携" },
+          { repo: "async-aws", package: "pieceofcake2/async-aws", en: "AsyncAws integration", ja: "AsyncAws との連携" },
         ],
       },
       {
