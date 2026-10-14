@@ -10,7 +10,9 @@ import { h } from "vue";
 // load, because the client-side router of this site doesn't know its pages.
 const sitePrefixes = [
   '/docs/',
-  ...groups.flatMap((group) => group.items.map((item) => `/${item.repo}/`)),
+  ...groups
+    .flatMap((group) => group.items ?? (group.categories ?? []).flatMap((category) => category.items))
+    .map((item) => `/${item.repo}/`),
 ]
 
 const isOtherSite = (pathname, base) => {
