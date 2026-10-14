@@ -33,23 +33,23 @@ export default {
       ],
     })
   },
-  enhanceApp({ router }) {
+  enhanceApp() {
     if (typeof window === 'undefined') {
       return
     }
 
-    const previous = router.onBeforeRouteChange
-    router.onBeforeRouteChange = async (href) => {
-      if ((await previous?.(href)) === false) {
-        return false
+    // Runs in the capture phase, before the client-side router's click handler.
+    // The router leaves links with a target attribute to the browser.
+    window.addEventListener('click', (event) => {
+      const link = event.target instanceof Element ? event.target.closest('a[href]') : null
+      if (!link || link.hasAttribute('target')) {
+        return
       }
 
-      const url = new URL(href, window.location.href)
+      const url = new URL(link.getAttribute('href'), link.baseURI)
       if (url.origin === window.location.origin && isOtherSite(url.pathname, import.meta.env.BASE_URL)) {
-        window.location.assign(url.href)
-
-        return false
+        link.setAttribute('target', '_self')
       }
-    }
+    }, true)
   },
 }
