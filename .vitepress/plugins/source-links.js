@@ -1,5 +1,4 @@
-import { existsSync, statSync } from 'fs'
-import { join, posix } from 'path'
+import { posix } from 'path'
 
 const schemeRE = /^[a-z][a-z0-9+.-]*:/i
 
@@ -18,9 +17,9 @@ const schemeRE = /^[a-z][a-z0-9+.-]*:/i
  * @param {object} options
  * @param {string} options.repository owner/repo
  * @param {string} options.branch Branch the docs are built from
- * @param {string} options.srcDir Absolute path of the site's source directory
+ * @param {string[]} options.pages Markdown files of the site, relative to its source directory
  */
-export function sourceLinks(md, { repository, branch, srcDir }) {
+export function sourceLinks(md, { repository, branch, pages }) {
   const blobUrl = (path) => encodeURI(`https://github.com/${repository}/blob/${branch}/${path}`)
 
   const isPage = (target) => {
@@ -28,11 +27,10 @@ export function sourceLinks(md, { repository, branch, srcDir }) {
       return true
     }
 
-    const dir = join(srcDir, target)
+    // A directory link is a page when the directory has README.md or index.md
+    const dir = target === '.' ? '' : `${target.replace(/\/$/, '')}/`
 
-    return existsSync(dir)
-      && statSync(dir).isDirectory()
-      && (existsSync(join(dir, 'README.md')) || existsSync(join(dir, 'index.md')))
+    return pages.includes(`${dir}README.md`) || pages.includes(`${dir}index.md`)
   }
 
   const rewrite = (href, page) => {

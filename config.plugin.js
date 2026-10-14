@@ -79,8 +79,8 @@ function pageLink(route) {
 /**
  * One sidebar group per page (the home page first), listing its `##` headings.
  */
-async function buildSidebar() {
-  const pages = findPages(srcDir).sort((a, b) => {
+async function buildSidebar(pages) {
+  const sorted = [...pages].sort((a, b) => {
     const depth = (page) => (toRoute(page) === 'index.md' ? 0 : 1)
 
     return depth(a) - depth(b) || a.localeCompare(b)
@@ -94,7 +94,7 @@ async function buildSidebar() {
   try {
     const groups = []
 
-    for (const page of pages) {
+    for (const page of sorted) {
       const env = { path: join(srcDir, page), relativePath: page, cleanUrls: false }
       await md.renderAsync(readFileSync(join(srcDir, page), 'utf-8'), env)
 
@@ -144,6 +144,7 @@ export default async ({ bookNav, bookUrl }) => {
   const source = process.env.DOCS_SOURCE
   const composer = readComposer(source)
   const license = findLicense(source)
+  const pages = findPages(srcDir)
 
   const title = composer.name || repository
   const repoUrl = `https://github.com/${repository}`
@@ -168,13 +169,13 @@ export default async ({ bookNav, bookUrl }) => {
         slugify: githubSlugify,
       },
       config: (md) => {
-        md.use(sourceLinks, { repository, branch, srcDir })
+        md.use(sourceLinks, { repository, branch, pages })
         md.use(noInterpolation)
       },
     },
     themeConfig: {
       nav: bookNav({ absolute: true }),
-      sidebar: await buildSidebar(),
+      sidebar: await buildSidebar(pages),
       socialLinks: [
         { icon: 'github', link: repoUrl },
       ],
