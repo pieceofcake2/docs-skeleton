@@ -1,8 +1,8 @@
 # pieceofcake2/docs-skeleton
 
-A [VitePress](https://vitepress.dev/) based documentation skeleton used by the
-[Piece of Cake 2](https://github.com/pieceofcake2) project, which maintains
-community forks of CakePHP 2.x and its plugins.
+A [VitePress](https://vitepress.dev/) based documentation skeleton for the
+documentation of [pieceofcake2/cakephp](https://github.com/pieceofcake2/cakephp),
+a community fork of CakePHP 2.x, and its plugins.
 
 This is a fork of [cakephp/docs-skeleton](https://github.com/cakephp/docs-skeleton)
 with the following changes:
