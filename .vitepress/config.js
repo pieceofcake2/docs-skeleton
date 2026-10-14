@@ -2,6 +2,7 @@ import { defineConfig } from 'vitepress'
 import { substitutionsReplacer } from './plugins/substitutions-replacer.js'
 import { pieceofcake2Container } from './plugins/pieceofcake2-container.js'
 import { deepMerge, loadConfigOverrides, applyBaseToHeadTags } from './utils.js'
+import { bookNav, bookUrl } from './book-nav.js'
 
 const defaultConfig = {
   srcDir: 'docs',
@@ -57,13 +58,15 @@ const defaultConfig = {
   locales: {}
 }
 
-const overrides = await loadConfigOverrides(import.meta.url)
+const overrides = await loadConfigOverrides(import.meta.url, { bookNav, bookUrl })
 const mergedConfig = deepMerge(defaultConfig, overrides)
 
 // Configure markdown plugins after mergedConfig is available
+const overrideMarkdownConfig = mergedConfig.markdown.config
 mergedConfig.markdown.config = (md) => {
   md.use(substitutionsReplacer, { substitutions: mergedConfig.substitutions || {} })
   md.use(pieceofcake2Container)
+  overrideMarkdownConfig?.(md)
 }
 
 // Apply base path to head tags if base is specified

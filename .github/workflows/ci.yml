@@ -31,3 +31,13 @@ jobs:
     
     - name: Validate configuration
       run: npm run docs:build
+
+    - name: Validate plugin configuration
+      run: |
+        printf '# Example\n\nSee [LICENSE](../LICENSE).\n\n## Usage\n\nText.\n' > docs/README.md
+        cp config.plugin.js config.js
+        npm run docs:build
+      env:
+        DOCS_REPOSITORY: pieceofcake2/example
+        DOCS_BRANCH: main
+        DOCS_SOURCE: ${{ github.workspace }}

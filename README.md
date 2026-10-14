@@ -1,8 +1,8 @@
 # pieceofcake2/docs-skeleton
 
-A [VitePress](https://vitepress.dev/) based documentation skeleton used by the
-[Piece of Cake 2](https://github.com/pieceofcake2) project, which maintains
-community forks of CakePHP 2.x and its plugins.
+A [VitePress](https://vitepress.dev/) based documentation skeleton for the
+documentation of [pieceofcake2/cakephp](https://github.com/pieceofcake2/cakephp),
+a community fork of CakePHP 2.x, and its plugins.
 
 This is a fork of [cakephp/docs-skeleton](https://github.com/cakephp/docs-skeleton)
 with the following changes:
@@ -104,6 +104,79 @@ export default {
 }
 ```
 
+### Book Navigation
+
+The header menu of the CakePHP 2 book is defined in `.vitepress/book-nav.js`,
+so the book and the plugin documentation sites show the same menu. `config.js`
+can export a function instead of an object; it receives the helpers
+`bookNav()` and `bookUrl`:
+
+```javascript
+export default ({ bookNav }) => ({
+  themeConfig: {
+    nav: bookNav(),                      // book pages linked relative to the site
+    // nav: bookNav({ locale: 'ja' }),   // Japanese labels and /ja/ pages
+    // nav: bookNav({ absolute: true }), // absolute URLs, for other sites
+  },
+})
+```
+
+## Plugin Documentation Sites
+
+Plugins publish the Markdown in their `docs/` folder to GitHub Pages at
+`https://pieceofcake2.github.io/<repo>/`, with the look and header menu of the
+book. The reusable workflow `.github/workflows/plugin-docs.yml` builds the site
+with `config.plugin.js` and deploys it. A plugin adds `.github/workflows/docs.yml`:
+
+```yaml
+name: Docs
+
+on:
+  push:
+    branches:
+      - '2.x' # the default branch
+    paths:
+      - 'docs/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  docs:
+    if: github.repository_owner == 'pieceofcake2'
+    uses: pieceofcake2/docs-skeleton/.github/workflows/plugin-docs.yml@main
+```
+
+and sets **Settings > Pages > Source** to **GitHub Actions**.
+
+The site needs no configuration in the plugin:
+
+- `docs/README.md` is the home page. Other Markdown files in `docs/` are
+  further pages (`docs/foo/README.md` is served as `foo/`).
+- The title and description come from `composer.json` (`name`, `description`).
+- The sidebar lists the pages (the home page first) and their `##` headings.
+- Images (e.g. `docs/img/`) are bundled. Links to other files (e.g.
+  `examples/router.php`) and out of `docs/` (e.g. `../LICENSE`) point to the
+  file on GitHub, so the Markdown works both on GitHub and on the site.
+- Heading anchors are the same as on GitHub, so `[Setup](#setup)` links work.
+- `{{ ... }}` is shown as text, not evaluated by Vue.
+
+To build a plugin's site locally:
+
+```bash
+rsync -a ../debug_kit/docs/ docs/
+cp config.plugin.js config.js
+DOCS_REPOSITORY=pieceofcake2/debug_kit DOCS_BRANCH=2.x DOCS_SOURCE=../debug_kit npm run docs:build
+npm run docs:preview
+```
+
 ## Writing Documentation
 
 ### Content Location
@@ -140,12 +213,14 @@ This plugin requires PHP |phpversion| or higher (minimum |minphpversion|).
 .
 ├── .vitepress/           # VitePress configuration
 │   ├── config.js         # Main VitePress config (defaults)
+│   ├── book-nav.js       # Header menu of the book, shared with plugin sites
 │   ├── utils.js          # Utility functions
 │   ├── theme/            # Custom theme components
 │   └── plugins/          # Markdown-it plugins
 ├── docs/                 # Documentation content (markdown files)
 ├── config.js             # Your configuration overrides (create from config.default.js)
-└── config.default.js     # Template for configuration overrides
+├── config.default.js     # Template for configuration overrides
+└── config.plugin.js      # Configuration overrides for plugin documentation sites
 ```
 
 ## Linting
