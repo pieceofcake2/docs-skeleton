@@ -34,6 +34,8 @@
   --vp-custom-block-warning-bg: #f2dede;
   --vp-custom-block-info-bg: #dff0d8;
   --vp-custom-block-font-size: 14px;
+  /* Header logo (VitePress default: 24px; the nav bar is 64px high) */
+  --vp-nav-logo-height: 32px;
 }
 
 /* Dark Theme */
