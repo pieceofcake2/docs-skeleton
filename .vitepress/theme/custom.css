@@ -180,8 +180,8 @@
 }
 
 .VPNavBar .VPFlyout .VPMenu {
-  max-height: calc(100vh - var(--vp-nav-height) - var(--vp-layout-top-height, 0px) - 16px);
-  max-height: calc(100dvh - var(--vp-nav-height) - var(--vp-layout-top-height, 0px) - 16px);
+  max-height: calc(100vh - var(--vp-nav-height) - 16px);
+  max-height: calc(100dvh - var(--vp-nav-height) - 16px);
 }
 
 /*
@@ -215,7 +215,7 @@
 /*
  * Grouped dropdowns (the Plugins menu): make the group headings stand out
  * from the links. VitePress uses 600 for headings and 500 for links, which
- * look almost the same.
+ * look almost the same. (The mobile menu already uses 700 / 400.)
  */
 .VPMenuGroup .title {
   font-weight: 700;
@@ -223,14 +223,5 @@
 }
 
 .VPMenuGroup .VPMenuLink .link {
-  font-weight: 400;
-}
-
-.VPNavScreenMenuGroupSection .title {
-  font-weight: 700;
-  color: var(--vp-c-text-1);
-}
-
-.VPNavScreenMenuGroupSection .VPNavScreenMenuGroupLink .link {
   font-weight: 400;
 }

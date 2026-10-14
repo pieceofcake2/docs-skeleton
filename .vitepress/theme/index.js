@@ -29,8 +29,12 @@ export default {
     return h(DefaultTheme.Layout, null, {
       'layout-top': () => [
         h(PageLoader),
-        h(VersionBanner),
       ],
+      // The version banner sits at the top of the main column and scrolls with
+      // the page instead of being fixed above the header.
+      'doc-before': () => h(VersionBanner),
+      'page-top': () => h(VersionBanner),
+      'home-hero-before': () => h(VersionBanner),
     })
   },
   enhanceApp({ router }) {

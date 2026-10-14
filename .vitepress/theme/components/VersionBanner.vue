@@ -1,5 +1,5 @@
 <script setup>
-import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed } from 'vue'
 import { useData } from 'vitepress'
 
 const { theme } = useData()
@@ -42,64 +42,11 @@ const linkText = computed(() => {
   return 'View the latest version.'
 })
 
-const bannerElement = ref(null)
-let resizeObserver = null
-
-function setLayoutTopHeight(height) {
-  if (typeof document === 'undefined') {
-    return
-  }
-
-  document.documentElement.style.setProperty('--vp-layout-top-height', height)
-}
-
-async function syncLayoutTopHeight() {
-  if (!isVisible.value) {
-    setLayoutTopHeight('0px')
-    return
-  }
-
-  await nextTick()
-
-  const bannerHeight = bannerElement.value?.offsetHeight || 0
-  setLayoutTopHeight(`${bannerHeight}px`)
-}
-
-watch(isVisible, () => {
-  syncLayoutTopHeight()
-}, { immediate: true })
-
-onMounted(() => {
-  if (typeof window === 'undefined' || !window.ResizeObserver) {
-    return
-  }
-
-  resizeObserver = new ResizeObserver(() => {
-    syncLayoutTopHeight()
-  })
-
-  if (bannerElement.value) {
-    resizeObserver.observe(bannerElement.value)
-  }
-
-  syncLayoutTopHeight()
-})
-
-onUnmounted(() => {
-  if (resizeObserver) {
-    resizeObserver.disconnect()
-    resizeObserver = null
-  }
-
-  setLayoutTopHeight('0px')
-})
-
 </script>
 
 <template>
   <div
     v-if="isVisible"
-    ref="bannerElement"
     class="version-banner"
     role="status"
     aria-live="polite"
@@ -111,19 +58,20 @@ onUnmounted(() => {
 
 
 <style scoped>
+  /*
+   * Shown at the top of the main column (doc-before / page-top /
+   * home-hero-before slots) and scrolls with the page, so the fixed header and
+   * the "On this page" outline keep VitePress's own positions.
+   */
   .version-banner {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: calc(var(--vp-z-index-nav) + 1);
+    margin: 0 0 16px;
+    border: 1px solid #e8c892;
+    border-radius: 8px;
     background: #fff7e8;
     color: #734a00;
-    padding: 12px 16px;
-    width: 100%;
-    text-align: center;
-    user-select: none;
-    border-bottom: 1px solid #e8c892;
+    padding: 4px 12px;
+    font-size: 13px;
+    line-height: 1.5;
   }
 
   .version-banner a {
@@ -132,8 +80,8 @@ onUnmounted(() => {
   }
 
   .dark .version-banner {
+    border-color: #9b6a1f;
     background: #2d2417;
     color: #f3c372;
-    border-bottom-color: #9b6a1f;
   }
 </style>
