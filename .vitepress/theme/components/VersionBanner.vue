@@ -78,7 +78,7 @@ const linkText = computed(() => {
     border-bottom: 1px solid #e8c892;
     background: #fff7e8;
     color: #734a00;
-    padding: 4px 16px;
+    padding: 8px 16px;
     font-size: 13px;
     line-height: 1.5;
     text-align: center;
