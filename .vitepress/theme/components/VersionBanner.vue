@@ -85,8 +85,10 @@ const linkText = computed(() => {
   }
 
   .version-banner a {
+    display: inline-block;
     color: inherit;
     text-decoration: underline;
+    white-space: nowrap;
   }
 
   .dark .version-banner {
