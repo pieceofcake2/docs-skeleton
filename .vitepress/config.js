@@ -31,7 +31,7 @@ const defaultConfig = {
     },
     footer: {
       message: 'Based on the <a href="https://github.com/cakephp/docs">CakePHP Cookbook</a>. Content licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a>. Not affiliated with the Cake Software Foundation.',
-      copyright: 'Original content © Cake Software Foundation, Inc. Modifications © Piece of Cake 2 contributors.'
+      copyright: 'Original content © Cake Software Foundation, Inc. Modifications © 2025-present Piece of Cake 2.'
     },
     lastUpdated: {
       text: 'Updated at',
