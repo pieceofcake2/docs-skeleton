@@ -2,7 +2,7 @@
  * Header navigation of the CakePHP 2 book (pieceofcake2/docs).
  *
  * The book and the plugin documentation sites share this definition, so the
- * header menu is the same on every Piece of Cake 2 documentation site.
+ * header menu is the same on the book and on every plugin site.
  */
 
 export const bookUrl = 'https://pieceofcake2.github.io/docs/'

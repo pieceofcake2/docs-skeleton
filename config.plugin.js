@@ -1,7 +1,7 @@
 /**
- * Configuration overrides for the documentation site of a Piece of Cake 2
- * plugin, built from the `docs/` folder of the plugin's repository and
- * published at https://pieceofcake2.github.io/<repo>/.
+ * Configuration overrides for the documentation site of a plugin in the
+ * pieceofcake2 organization, built from the `docs/` folder of the plugin's
+ * repository and published at https://pieceofcake2.github.io/<repo>/.
  *
  * Used by .github/workflows/plugin-docs.yml, which copies this file to
  * `config.js`. Everything is derived from the repository, so plugins need no
@@ -151,7 +151,6 @@ export default async ({ bookNav, bookUrl }) => {
   const siteUrl = `https://${owner.toLowerCase()}.github.io/${repo}/`
 
   const footer = [
-    `<a href="${repoUrl}">${title}</a> is maintained by the <a href="https://github.com/pieceofcake2">Piece of Cake 2</a> project.`,
     license ? `See <a href="${repoUrl}/blob/${branch}/${license}">${license}</a> for copyright and license information.` : '',
     'Not affiliated with the Cake Software Foundation.',
   ].filter(Boolean).join(' ')
@@ -188,9 +187,9 @@ export default async ({ bookNav, bookUrl }) => {
         copyright: '',
       },
       versionBanner: {
-        message: `This is the documentation for ${title}, maintained by the Piece of Cake 2 project for CakePHP 2.x on PHP 8.`,
+        message: `This is the documentation for ${title}, a CakePHP 2.x plugin for pieceofcake2/cakephp.`,
         link: `${bookUrl}pieceofcake2.html`,
-        linkText: 'About Piece of Cake 2.',
+        linkText: 'About this fork.',
       },
     },
   }
