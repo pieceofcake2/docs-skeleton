@@ -107,9 +107,11 @@ export default {
 ### Book Navigation
 
 The header menu of the CakePHP 2 book is defined in `.vitepress/book-nav.js`,
-so the book and the plugin documentation sites show the same menu. `config.js`
-can export a function instead of an object; it receives the helpers
-`bookNav()` and `bookUrl`:
+so the book, the plugin documentation sites and the top page
+(https://pieceofcake2.github.io/) show the same menu: Home (the top page), the
+book, and a "Plugins" dropdown that links the documentation site of every
+package. `config.js` can export a function instead of an object; it receives
+the helpers `bookNav()` and `bookUrl`:
 
 ```javascript
 export default ({ bookNav }) => ({
@@ -117,9 +119,16 @@ export default ({ bookNav }) => ({
     nav: bookNav(),                      // book pages linked relative to the site
     // nav: bookNav({ locale: 'ja' }),   // Japanese labels and /ja/ pages
     // nav: bookNav({ absolute: true }), // absolute URLs, for other sites
+    // nav: bookNav({ absolute: true, current: 'debug_kit' }), // on a plugin site
   },
 })
 ```
+
+The packages of the "Plugins" dropdown come from `.vitepress/packages.js`, which
+the top page also uses for its package list. When a repository is added, add it
+there and to the book's
+[Maintained Plugins](https://pieceofcake2.github.io/docs/plugins/maintained-plugins.html)
+page.
 
 ## Plugin Documentation Sites
 
@@ -214,6 +223,7 @@ This plugin requires PHP |phpversion| or higher (minimum |minphpversion|).
 ├── .vitepress/           # VitePress configuration
 │   ├── config.js         # Main VitePress config (defaults)
 │   ├── book-nav.js       # Header menu of the book, shared with plugin sites
+│   ├── packages.js       # Packages of the "Plugins" menu and the top page
 │   ├── utils.js          # Utility functions
 │   ├── theme/            # Custom theme components
 │   └── plugins/          # Markdown-it plugins

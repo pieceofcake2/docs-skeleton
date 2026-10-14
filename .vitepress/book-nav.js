@@ -1,11 +1,13 @@
 /**
  * Header navigation of the CakePHP 2 book (pieceofcake2/docs).
  *
- * The book and the plugin documentation sites share this definition, so the
- * header menu is the same on the book and on every plugin site.
+ * The book, the plugin documentation sites and the top page share this
+ * definition, so the header menu is the same on every site.
  */
+import { groups, docsUrl } from './packages.js'
 
-export const bookUrl = 'https://pieceofcake2.github.io/docs/'
+export const siteUrl = 'https://pieceofcake2.github.io/'
+export const bookUrl = `${siteUrl}docs/`
 
 const links = {
   text: 'Links',
@@ -17,8 +19,38 @@ const links = {
 }
 
 const labels = {
-  root: { gettingStarted: 'Getting Started', documentation: 'Documentation' },
-  ja: { gettingStarted: 'はじめに', documentation: 'ドキュメント' },
+  root: { home: 'Home', gettingStarted: 'Getting Started', documentation: 'Documentation', plugins: 'Plugins' },
+  ja: { home: 'ホーム', gettingStarted: 'はじめに', documentation: 'ドキュメント', plugins: 'プラグイン' },
+}
+
+/**
+ * A page of another site under https://pieceofcake2.github.io/: it opens in
+ * the same tab without the external link icon, like a page of the same site.
+ */
+const sameOrigin = (link) => ({ link, target: '_self', noIcon: true })
+
+/**
+ * Menu groups of the "Plugins" dropdown: the core repositories, the
+ * development tools and one group per plugin category.
+ */
+function pluginGroups({ locale, current }) {
+  const lang = locale === 'root' ? 'en' : locale
+  const prefix = locale === 'root' ? '' : `${locale}/`
+
+  const entry = (item) => {
+    if (item.repo === current) {
+      // This site: a link within it, highlighted on every page.
+      return { text: item.package, link: '/', activeMatch: '^/' }
+    }
+
+    const url = docsUrl(item)
+
+    return { text: item.package, ...sameOrigin(url === bookUrl ? `${bookUrl}${prefix}` : url) }
+  }
+
+  return groups
+    .flatMap((group) => group.categories ?? [group])
+    .map((group) => ({ text: group[lang] ?? group.en, items: group.items.map(entry) }))
 }
 
 /**
@@ -27,8 +59,12 @@ const labels = {
  * @param {boolean} [options.absolute] Link the book pages with absolute URLs
  *   (for sites other than the book). They open in the same tab without the
  *   external link icon, so the menu looks the same as in the book.
+ * @param {string} [options.current] The site the menu is shown on, if it is
+ *   not the book: the repository name of a plugin site (its entry of the
+ *   "Plugins" menu links within the site and is highlighted) or 'home' for the
+ *   top page.
  */
-export function bookNav({ locale = 'root', absolute = false } = {}) {
+export function bookNav({ locale = 'root', absolute = false, current = undefined } = {}) {
   const label = labels[locale] || labels.root
   const prefix = locale === 'root' ? '' : `${locale}/`
 
@@ -37,18 +73,19 @@ export function bookNav({ locale = 'root', absolute = false } = {}) {
       return { link: `/${prefix}${path}` }
     }
 
-    return {
-      link: `${bookUrl}${prefix}${path ? `${path}.html` : ''}`,
-      target: '_self',
-      noIcon: true,
-    }
+    return sameOrigin(`${bookUrl}${prefix}${path ? `${path}.html` : ''}`)
   }
 
+  const home = current === 'home' ? { link: `/${prefix}` } : sameOrigin(`${siteUrl}${prefix}`)
+  const plugins = pluginGroups({ locale, current })
+  const onPluginSite = plugins.some((group) => group.items.some((item) => item.activeMatch))
+
   return [
-    { text: 'Piece of Cake 2', ...page('pieceofcake2') },
+    { text: label.home, ...home },
     { text: label.gettingStarted, ...page('getting-started') },
     { text: 'API', link: 'https://api.cakephp.org/2.10/' },
     { text: label.documentation, ...page('') },
+    { text: label.plugins, ...(onPluginSite ? { activeMatch: '^/' } : {}), items: plugins },
     { ...links, items: links.items.map((item) => ({ ...item })) },
   ]
 }
