@@ -166,8 +166,27 @@
 }
 
 /*
- * "Plugins" menu of the header (the only dropdown with many groups): lay the
- * groups out in columns on wide screens instead of one long list.
+ * Dropdowns of the header. iPadOS Safari painted the page content over an open
+ * dropdown once its fade-in ended (the items stayed tappable): at the end of
+ * the transition WebKit drops the menu's compositing layer, and a tall menu
+ * is also a scroll container with a layer of its own. Keep the menu on its
+ * own layer for good, and keep it within the viewport below the header (with
+ * the version banner) so that it rarely needs to scroll.
+ */
+.VPNavBar .VPFlyout .menu {
+  will-change: opacity, transform;
+}
+
+.VPNavBar .VPFlyout .VPMenu {
+  max-height: calc(100vh - var(--vp-nav-height) - var(--vp-layout-top-height, 0px) - 16px);
+  max-height: calc(100dvh - var(--vp-nav-height) - var(--vp-layout-top-height, 0px) - 16px);
+}
+
+/*
+ * "Plugins" menu (the only dropdown with many groups): lay the groups out in
+ * columns instead of one long list. 2 columns fit below 1024px, where the
+ * button is further left; 3 columns from 1024px (iPad landscape and wider)
+ * keep the menu about 550px tall.
  */
 @media (min-width: 768px) {
   .VPNavBarMenuGroup .VPMenu:has(> .items > .VPMenuGroup:nth-child(6)) > .items {
@@ -184,9 +203,9 @@
   }
 }
 
-@media (min-width: 1280px) {
+@media (min-width: 1024px) {
   .VPNavBarMenuGroup .VPMenu:has(> .items > .VPMenuGroup:nth-child(6)) > .items {
     columns: 3;
-    width: 804px;
+    width: 780px;
   }
 }
