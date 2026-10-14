@@ -33,23 +33,24 @@ export default {
       ],
     })
   },
-  enhanceApp() {
+  enhanceApp({ router }) {
     if (typeof window === 'undefined') {
       return
     }
 
-    // Runs in the capture phase, before the client-side router's click handler.
-    // The router leaves links with a target attribute to the browser.
-    window.addEventListener('click', (event) => {
-      const link = event.target instanceof Element ? event.target.closest('a[href]') : null
-      if (!link || link.hasAttribute('target')) {
+    // The client-side router only knows the pages of this site. Hand links into
+    // the other sites (the book, the package documentation sites and the top
+    // page) to the browser as a normal page load.
+    const go = router.go.bind(router)
+    router.go = async (href, options) => {
+      const url = new URL(href, window.location.href)
+      if (url.origin === window.location.origin && isOtherSite(url.pathname, import.meta.env.BASE_URL)) {
+        window.location.assign(url.href)
+
         return
       }
 
-      const url = new URL(link.getAttribute('href'), link.baseURI)
-      if (url.origin === window.location.origin && isOtherSite(url.pathname, import.meta.env.BASE_URL)) {
-        link.setAttribute('target', '_self')
-      }
-    }, true)
+      await go(href, options)
+    }
   },
 }
