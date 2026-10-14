@@ -211,3 +211,26 @@
     width: 780px;
   }
 }
+
+/*
+ * Grouped dropdowns (the Plugins menu): make the group headings stand out
+ * from the links. VitePress uses 600 for headings and 500 for links, which
+ * look almost the same.
+ */
+.VPMenuGroup .title {
+  font-weight: 700;
+  color: var(--vp-c-text-1);
+}
+
+.VPMenuGroup .VPMenuLink .link {
+  font-weight: 400;
+}
+
+.VPNavScreenMenuGroupSection .title {
+  font-weight: 700;
+  color: var(--vp-c-text-1);
+}
+
+.VPNavScreenMenuGroupSection .VPNavScreenMenuGroupLink .link {
+  font-weight: 400;
+}
