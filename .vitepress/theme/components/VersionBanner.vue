@@ -1,6 +1,16 @@
 <script setup>
-import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed } from 'vue'
 import { useData } from 'vitepress'
+
+const props = defineProps({
+  // Where the banner is rendered: 'doc' (top of the doc area, next to the
+  // sidebar), 'page' or 'home'. 'doc' cancels the padding of .VPDoc so the
+  // banner spans the whole area.
+  placement: {
+    type: String,
+    default: 'doc',
+  },
+})
 
 const { theme } = useData()
 
@@ -42,65 +52,12 @@ const linkText = computed(() => {
   return 'View the latest version.'
 })
 
-const bannerElement = ref(null)
-let resizeObserver = null
-
-function setLayoutTopHeight(height) {
-  if (typeof document === 'undefined') {
-    return
-  }
-
-  document.documentElement.style.setProperty('--vp-layout-top-height', height)
-}
-
-async function syncLayoutTopHeight() {
-  if (!isVisible.value) {
-    setLayoutTopHeight('0px')
-    return
-  }
-
-  await nextTick()
-
-  const bannerHeight = bannerElement.value?.offsetHeight || 0
-  setLayoutTopHeight(`${bannerHeight}px`)
-}
-
-watch(isVisible, () => {
-  syncLayoutTopHeight()
-}, { immediate: true })
-
-onMounted(() => {
-  if (typeof window === 'undefined' || !window.ResizeObserver) {
-    return
-  }
-
-  resizeObserver = new ResizeObserver(() => {
-    syncLayoutTopHeight()
-  })
-
-  if (bannerElement.value) {
-    resizeObserver.observe(bannerElement.value)
-  }
-
-  syncLayoutTopHeight()
-})
-
-onUnmounted(() => {
-  if (resizeObserver) {
-    resizeObserver.disconnect()
-    resizeObserver = null
-  }
-
-  setLayoutTopHeight('0px')
-})
-
 </script>
 
 <template>
   <div
     v-if="isVisible"
-    ref="bannerElement"
-    class="version-banner"
+    :class="['version-banner', `version-banner--${props.placement}`]"
     role="status"
     aria-live="polite"
   >
@@ -111,29 +68,43 @@ onUnmounted(() => {
 
 
 <style scoped>
+  /*
+   * A full-width strip at the top of the content area (doc-top / page-top /
+   * home-hero-before slots). It scrolls with the page instead of being fixed
+   * above the header, so the header and the "On this page" outline keep
+   * VitePress's own positions.
+   */
   .version-banner {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: calc(var(--vp-z-index-nav) + 1);
+    border-bottom: 1px solid #e8c892;
     background: #fff7e8;
     color: #734a00;
-    padding: 12px 16px;
-    width: 100%;
+    padding: 4px 16px;
+    font-size: 13px;
+    line-height: 1.5;
     text-align: center;
-    user-select: none;
-    border-bottom: 1px solid #e8c892;
   }
 
   .version-banner a {
+    display: inline-block;
     color: inherit;
     text-decoration: underline;
+    white-space: nowrap;
   }
 
   .dark .version-banner {
+    border-bottom-color: #9b6a1f;
     background: #2d2417;
     color: #f3c372;
-    border-bottom-color: #9b6a1f;
+  }
+
+  /* Cancel the padding of .VPDoc (32px 24px, 48px 32px from 768px). */
+  .version-banner--doc {
+    margin: -32px -24px 32px;
+  }
+
+  @media (min-width: 768px) {
+    .version-banner--doc {
+      margin: -48px -32px 32px;
+    }
   }
 </style>

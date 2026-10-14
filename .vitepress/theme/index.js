@@ -29,8 +29,12 @@ export default {
     return h(DefaultTheme.Layout, null, {
       'layout-top': () => [
         h(PageLoader),
-        h(VersionBanner),
       ],
+      // The version banner is a strip at the top of the content area that
+      // scrolls with the page instead of being fixed above the header.
+      'doc-top': () => h(VersionBanner, { placement: 'doc' }),
+      'page-top': () => h(VersionBanner, { placement: 'page' }),
+      'home-hero-before': () => h(VersionBanner, { placement: 'home' }),
     })
   },
   enhanceApp({ router }) {
