@@ -173,7 +173,7 @@ export default async ({ bookNav, bookUrl }) => {
       },
     },
     themeConfig: {
-      nav: bookNav({ absolute: true }),
+      nav: bookNav({ absolute: true, current: repo }),
       sidebar: await buildSidebar(pages),
       socialLinks: [
         { icon: 'github', link: repoUrl },
@@ -188,7 +188,7 @@ export default async ({ bookNav, bookUrl }) => {
       },
       versionBanner: {
         message: `This is the documentation for ${title}, a CakePHP 2.x plugin for pieceofcake2/cakephp.`,
-        link: `${bookUrl}pieceofcake2.html`,
+        link: `${bookUrl}getting-started.html#about-this-fork`,
         linkText: 'About this fork.',
       },
     },
