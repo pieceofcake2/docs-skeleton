@@ -147,3 +147,46 @@
     color: #c3b1dc;
   }
 }
+
+/*
+ * 404 page: center the message between the header (with the version banner,
+ * if any) and the footer. .VPContent already grows to fill that space.
+ */
+.VPContent:has(> .NotFound) {
+  display: flex;
+  flex-direction: column;
+}
+
+.VPContent:has(> .NotFound) > .NotFound {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 48px 24px;
+}
+
+/*
+ * "Plugins" menu of the header (the only dropdown with many groups): lay the
+ * groups out in columns on wide screens instead of one long list.
+ */
+@media (min-width: 768px) {
+  .VPNavBarMenuGroup .VPMenu:has(> .items > .VPMenuGroup:nth-child(6)) > .items {
+    columns: 2;
+    column-gap: 12px;
+    width: 532px;
+  }
+
+  .VPNavBarMenuGroup .VPMenu:has(> .items > .VPMenuGroup:nth-child(6)) .VPMenuGroup {
+    break-inside: avoid;
+    margin: 0;
+    border-top: 0;
+    padding: 0 0 12px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .VPNavBarMenuGroup .VPMenu:has(> .items > .VPMenuGroup:nth-child(6)) > .items {
+    columns: 3;
+    width: 804px;
+  }
+}
