@@ -28,18 +28,25 @@ export function isObject(item) {
 
 /**
  * Load configuration overrides from config.js if it exists
+ *
+ * config.js exports either an object or a function. A function receives the
+ * shared helpers (e.g. `bookNav`) and returns the object (or a promise of it).
+ *
  * @param {string} importMetaUrl - import.meta.url from the calling module
+ * @param {object} helpers - Helpers passed to a config function
  * @returns {Promise<object>} The configuration overrides or an empty object
  */
-export async function loadConfigOverrides(importMetaUrl) {
+export async function loadConfigOverrides(importMetaUrl, helpers = {}) {
   const __dirname = dirname(fileURLToPath(importMetaUrl))
   const configPath = join(__dirname, '../config.js')
 
-  if (existsSync(configPath)) {
-    return (await import(configPath)).default
+  if (!existsSync(configPath)) {
+    return {}
   }
 
-  return {}
+  const overrides = (await import(configPath)).default
+
+  return typeof overrides === 'function' ? await overrides(helpers) : overrides
 }
 
 /**
