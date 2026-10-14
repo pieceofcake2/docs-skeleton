@@ -30,11 +30,11 @@ export default {
       'layout-top': () => [
         h(PageLoader),
       ],
-      // The version banner sits at the top of the main column and scrolls with
-      // the page instead of being fixed above the header.
-      'doc-before': () => h(VersionBanner),
-      'page-top': () => h(VersionBanner),
-      'home-hero-before': () => h(VersionBanner),
+      // The version banner is a strip at the top of the content area that
+      // scrolls with the page instead of being fixed above the header.
+      'doc-top': () => h(VersionBanner, { placement: 'doc' }),
+      'page-top': () => h(VersionBanner, { placement: 'page' }),
+      'home-hero-before': () => h(VersionBanner, { placement: 'home' }),
     })
   },
   enhanceApp({ router }) {
