@@ -63,7 +63,7 @@ export const groups = [
         repo: "e2e-test",
         package: "pieceofcake2/e2e-test",
         en: "Browser end-to-end tests with PHPUnit and Symfony Panther (Chrome, PC and mobile)",
-        ja: "PHPUnit と Symfony Panther によるブラウザでのエンドツーエンドテスト（Chrome、PC とスマートフォン）",
+        ja: "PHPUnit と Symfony Panther によるブラウザでの End-to-End テスト（Chrome、PC とスマートフォン）",
       },
     ],
   },
