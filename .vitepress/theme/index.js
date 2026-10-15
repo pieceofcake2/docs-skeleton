@@ -1,6 +1,7 @@
 import DefaultTheme from 'vitepress/theme-without-fonts'
 import PageLoader from "./components/PageLoader.vue";
 import VersionBanner from "./components/VersionBanner.vue";
+import MarkdownLinks from "./components/MarkdownLinks.vue";
 import { groups } from '../packages.js'
 import './custom.css'
 import { h } from "vue";
@@ -35,6 +36,8 @@ export default {
       'doc-top': () => h(VersionBanner, { placement: 'doc' }),
       'page-top': () => h(VersionBanner, { placement: 'page' }),
       'home-hero-before': () => h(VersionBanner, { placement: 'home' }),
+      // Links to the Markdown of the page (its .md version and its source)
+      'doc-footer-before': () => h(MarkdownLinks),
     })
   },
   enhanceApp({ router }) {
