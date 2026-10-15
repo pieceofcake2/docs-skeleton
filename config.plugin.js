@@ -17,6 +17,12 @@
  * further pages. The sidebar lists the pages and their `##` headings: the home
  * page first, then the pages in the order `docs/README.md` links them, then
  * the pages it doesn't link, by path.
+ *
+ * A Japanese translation goes in `docs/ja/`, with the same file names
+ * (`docs/ja/README.md`, `docs/ja/setup.md`, ...). When `docs/ja/README.md`
+ * exists, the site gets a Japanese locale at `/<repo>/ja/` with its own
+ * sidebar, header menu and labels, and a language switcher. Pages that are
+ * not translated yet are simply missing from the Japanese sidebar.
  */
 import { existsSync, readdirSync, readFileSync } from 'fs'
 import { dirname, join, posix, relative } from 'path'
@@ -124,7 +130,7 @@ function linkedPages(tokens, page, pages) {
  * moved to another page, e.g. `/#dynamodb-cache` to `/cache.html#dynamodb-cache`
  * (see MovedAnchor.vue).
  */
-async function buildSidebar(pages) {
+async function buildSidebar(pages, prefix = '') {
   const md = await createMarkdownRenderer(srcDir, {
     anchor: { slugify: githubSlugify },
     headers: { level: [2] },
@@ -142,7 +148,7 @@ async function buildSidebar(pages) {
       parsed.set(page, { env, tokens })
     }
 
-    const home = pages.find((page) => toRoute(page) === 'index.md')
+    const home = pages.find((page) => toRoute(page) === `${prefix}index.md`)
     const linked = home ? linkedPages(parsed.get(home).tokens, home, pages) : []
     const rank = (page) => {
       if (page === home) {
@@ -215,7 +221,10 @@ export default async ({ bookNav, bookUrl }) => {
   const composer = readComposer(source)
   const license = findLicense(source)
   const pages = findPages(srcDir)
-  const { sidebar, anchors } = await buildSidebar(pages)
+  const jaPages = pages.filter((page) => page.startsWith('ja/'))
+  const enPages = pages.filter((page) => !page.startsWith('ja/'))
+  const { sidebar, anchors } = await buildSidebar(enPages)
+  const ja = jaPages.some((page) => toRoute(page) === 'ja/index.md') ? await buildSidebar(jaPages, 'ja/') : null
 
   const title = composer.name || repository
   const repoUrl = `https://github.com/${repository}`
@@ -269,5 +278,41 @@ export default async ({ bookNav, bookUrl }) => {
         linkText: 'About this fork.',
       },
     },
+    ...(ja ? {
+      locales: {
+        root: { label: 'English', lang: 'en' },
+        ja: {
+          label: '日本語',
+          lang: 'ja',
+          themeConfig: {
+            nav: bookNav({ locale: 'ja', absolute: true, current: repo }),
+            sidebar: ja.sidebar,
+            headingAnchors: ja.anchors,
+            editLink: {
+              pattern: `${repoUrl}/edit/${branch}/docs/:path`,
+              text: 'GitHub でこのページを編集',
+            },
+            docFooter: { prev: '前のページ', next: '次のページ' },
+            outline: { label: 'このページの内容' },
+            lastUpdated: { text: '最終更新' },
+            returnToTopLabel: 'ページの先頭へ',
+            sidebarMenuLabel: 'メニュー',
+            darkModeSwitchLabel: 'ダークモード',
+            footer: {
+              message: [
+                license ? `著作権とライセンスについては <a href="${repoUrl}/blob/${branch}/${license}">${license}</a> を参照してください。` : '',
+                'Cake Software Foundation とは関係ありません。',
+              ].filter(Boolean).join(''),
+              copyright: '',
+            },
+            versionBanner: {
+              message: `これは ${title} のドキュメントです。pieceofcake2/cakephp 用の CakePHP 2.x プラグインです。`,
+              link: `${bookUrl}ja/getting-started.html#about-this-fork`,
+              linkText: 'このフォークについて',
+            },
+          },
+        },
+      },
+    } : {}),
   }
 }
