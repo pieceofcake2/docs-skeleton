@@ -171,12 +171,59 @@ The site needs no configuration in the plugin:
 - `docs/README.md` is the home page. Other Markdown files in `docs/` are
   further pages (`docs/foo/README.md` is served as `foo/`).
 - The title and description come from `composer.json` (`name`, `description`).
-- The sidebar lists the pages (the home page first) and their `##` headings.
+- The sidebar lists the pages and their `##` headings. A page's title is its
+  `#` heading (or `title` in its front matter).
 - Images (e.g. `docs/img/`) are bundled. Links to other files (e.g.
   `examples/router.php`) and out of `docs/` (e.g. `../LICENSE`) point to the
   file on GitHub, so the Markdown works both on GitHub and on the site.
 - Heading anchors are the same as on GitHub, so `[Setup](#setup)` links work.
 - `{{ ... }}` is shown as text, not evaluated by Vue.
+
+### Several Pages
+
+A plugin with long documentation can split it into pages. `docs/README.md`
+stays the overview (introduction, installation, quick start) and links every
+page; the links are the table of contents on GitHub and set the order of the
+sidebar:
+
+```
+docs/
+├── README.md          # the home page: overview and list of pages
+├── configuration.md
+├── session.md
+└── cache.md
+```
+
+```md
+# Foo Documentation
+
+Foo does ...
+
+- [Installation](#installation)
+- [Configuration](configuration.md)
+- [Session Handler](session.md)
+- [Cache Engine](cache.md)
+
+## Installation
+...
+```
+
+- Each page starts with a `#` heading, its title in the sidebar.
+- The sidebar shows the home page first, then the pages in the order
+  `docs/README.md` first links them, then pages it doesn't link, by path. With
+  more than one page, the sidebar groups are collapsible and only the group of
+  the current page is expanded.
+- Link pages by their Markdown file, e.g. `[Cache Engine](cache.md#settings)`
+  or `[Installation](README.md#installation)`. GitHub shows the `.md` files and
+  the site turns the links into links to its pages.
+- Moving a section to another page keeps old links working on the site: a link
+  to a heading anchor that is not on the page, e.g. `/foo/#cache-engine` after
+  the section moved to `cache.md`, is forwarded to the page that has that
+  heading (`/foo/cache.html#cache-engine`). Links on GitHub to
+  `docs/README.md#cache-engine` are not forwarded, so update them.
+- Every page gets its `.md` next to its `.html`, and `llms.txt` and
+  `llms-full.txt` list all pages in the order of the sidebar (see
+  [Markdown for AI Tools](#markdown-for-ai-tools)).
 
 To build a plugin's site locally:
 

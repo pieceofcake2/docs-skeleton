@@ -14,7 +14,9 @@
  *   linked from the footer
  *
  * `docs/README.md` is the home page and other Markdown files in `docs/` are
- * further pages. The sidebar lists the pages and their `##` headings.
+ * further pages. The sidebar lists the pages and their `##` headings: the home
+ * page first, then the pages in the order `docs/README.md` links them, then
+ * the pages it doesn't link, by path.
  */
 import { existsSync, readdirSync, readFileSync } from 'fs'
 import { dirname, join, posix, relative } from 'path'
@@ -77,41 +79,109 @@ function pageLink(route) {
 }
 
 /**
- * One sidebar group per page (the home page first), listing its `##` headings.
+ * Pages that a page links, in the order of the links, e.g. `['setup.md',
+ * 'cache.md']` for `[Setup](setup.md) ... [Cache](cache.md#engine)`.
+ */
+function linkedPages(tokens, page, pages) {
+  const linked = []
+
+  for (const token of tokens) {
+    for (const child of token.children || []) {
+      const href = child.type === 'link_open' ? child.attrGet('href') : null
+      if (!href || /^(?:[a-z][a-z0-9+.-]*:|\/|#)/i.test(href)) {
+        continue
+      }
+
+      let path
+      try {
+        path = decodeURI(href.replace(/[?#].*$/, ''))
+      } catch {
+        continue
+      }
+
+      const target = posix.normalize(posix.join(posix.dirname(page), path))
+      const dir = target === '.' ? '' : `${target.replace(/\/$/, '')}/`
+      const found = [target, `${dir}README.md`, `${dir}index.md`].find((candidate) => pages.includes(candidate))
+      if (found && !linked.includes(found)) {
+        linked.push(found)
+      }
+    }
+  }
+
+  return linked
+}
+
+/**
+ * The sidebar and the heading anchors of every page.
+ *
+ * One sidebar group per page, listing its `##` headings: the home page first,
+ * then the pages in the order the home page links them, then the other pages
+ * by path. With several pages, the groups are collapsible and only the group
+ * of the current page is expanded.
+ *
+ * `anchors` maps every heading anchor to the first page (in the order of the
+ * sidebar) that has it, so that the theme can forward links to a section that
+ * moved to another page, e.g. `/#dynamodb-cache` to `/cache.html#dynamodb-cache`
+ * (see MovedAnchor.vue).
  */
 async function buildSidebar(pages) {
-  const sorted = [...pages].sort((a, b) => {
-    const depth = (page) => (toRoute(page) === 'index.md' ? 0 : 1)
-
-    return depth(a) - depth(b) || a.localeCompare(b)
-  })
-
   const md = await createMarkdownRenderer(srcDir, {
     anchor: { slugify: githubSlugify },
     headers: { level: [2] },
   })
 
   try {
+    const parsed = new Map()
+
+    for (const page of pages) {
+      const source = readFileSync(join(srcDir, page), 'utf-8')
+      const env = { path: join(srcDir, page), relativePath: page, cleanUrls: false }
+      const tokens = md.parse(source, { ...env })
+      await md.renderAsync(source, env)
+
+      parsed.set(page, { env, tokens })
+    }
+
+    const home = pages.find((page) => toRoute(page) === 'index.md')
+    const linked = home ? linkedPages(parsed.get(home).tokens, home, pages) : []
+    const rank = (page) => {
+      if (page === home) {
+        return -1
+      }
+
+      const index = linked.indexOf(page)
+
+      return index === -1 ? linked.length : index
+    }
+    const sorted = [...pages].sort((a, b) => rank(a) - rank(b) || a.localeCompare(b))
+
     const groups = []
+    const anchors = {}
 
     for (const page of sorted) {
-      const env = { path: join(srcDir, page), relativePath: page, cleanUrls: false }
-      await md.renderAsync(readFileSync(join(srcDir, page), 'utf-8'), env)
-
+      const { env, tokens } = parsed.get(page)
       const link = pageLink(toRoute(page))
       const title = env.frontmatter?.title || env.title || page
 
       groups.push({
         text: md.utils.escapeHtml(title),
         link,
+        ...(pages.length > 1 ? { collapsed: true } : {}),
         items: (env.headers || []).map((header) => ({
           text: header.title,
           link: `${link}#${header.slug}`,
         })),
       })
+
+      for (const token of tokens) {
+        const id = token.type === 'heading_open' ? token.attrGet('id') : null
+        if (id && !(id in anchors)) {
+          anchors[id] = link
+        }
+      }
     }
 
-    return groups
+    return { sidebar: groups, anchors: pages.length > 1 ? anchors : {} }
   } finally {
     // createMarkdownRenderer() caches its instance; drop it so that VitePress
     // creates its own with the full markdown configuration.
@@ -145,6 +215,7 @@ export default async ({ bookNav, bookUrl }) => {
   const composer = readComposer(source)
   const license = findLicense(source)
   const pages = findPages(srcDir)
+  const { sidebar, anchors } = await buildSidebar(pages)
 
   const title = composer.name || repository
   const repoUrl = `https://github.com/${repository}`
@@ -178,7 +249,9 @@ export default async ({ bookNav, bookUrl }) => {
     },
     themeConfig: {
       nav: bookNav({ absolute: true, current: repo }),
-      sidebar: await buildSidebar(pages),
+      sidebar,
+      // Heading anchor => page, for links to a section on another page
+      headingAnchors: anchors,
       socialLinks: [
         { icon: 'github', link: repoUrl },
       ],

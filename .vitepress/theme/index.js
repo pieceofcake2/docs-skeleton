@@ -2,6 +2,7 @@ import DefaultTheme from 'vitepress/theme-without-fonts'
 import PageLoader from "./components/PageLoader.vue";
 import VersionBanner from "./components/VersionBanner.vue";
 import MarkdownLinks from "./components/MarkdownLinks.vue";
+import MovedAnchor from "./components/MovedAnchor.vue";
 import { groups } from '../packages.js'
 import './custom.css'
 import { h } from "vue";
@@ -41,6 +42,8 @@ export default {
       // without a doc footer.
       'doc-footer-before': () => h(MarkdownLinks),
       'doc-after': () => h(MarkdownLinks, { standalone: true }),
+      // Links to a heading that moved to another page of the site
+      'layout-bottom': () => h(MovedAnchor),
     })
   },
   enhanceApp({ router }) {
