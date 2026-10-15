@@ -54,7 +54,8 @@ function pluginGroups({ locale, current }) {
 
   return groups
     .flatMap((group) => group.categories ?? [group])
-    .map((group) => ({ text: group[lang] ?? group.en, items: group.items.map(entry) }))
+    .map((group) => ({ text: group[lang] ?? group.en, items: group.items.filter((item) => item.plugin !== false).map(entry) }))
+    .filter((group) => group.items.length > 0)
 }
 
 /**
