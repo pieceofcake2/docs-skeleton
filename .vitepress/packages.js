@@ -70,6 +70,13 @@ export const groups = [
         ja: "静的解析用の PHPStan 拡張",
       },
       {
+        repo: "phpcs-cakephp2",
+        package: "pieceofcake2/phpcs-cakephp2",
+        branch: "main",
+        en: "PHP_CodeSniffer standard for CakePHP 2",
+        ja: "CakePHP 2 用の PHP_CodeSniffer 規約",
+      },
+      {
         repo: "panther",
         package: "pieceofcake2/panther",
         branch: "1.x",
