@@ -15,6 +15,9 @@
  * - markdown: Markdown of the documentation home page on GitHub; defaults to
  *             docs/README.md of the repository
  * - en / ja:  short description
+ * - plugin:   false for repositories that are not plugins (the framework and
+ *             the application skeleton); they are left out of the "Plugins"
+ *             menu but stay in the package list and the sitemap index
  *
  * Groups have either `items` or `categories` (each with `items`).
  */
@@ -33,6 +36,7 @@ export const groups = [
         markdown: "https://github.com/pieceofcake2/docs/blob/2.x/docs/en/index.md",
         en: "The CakePHP 2.x framework",
         ja: "CakePHP 2.x フレームワーク",
+        plugin: false,
       },
       {
         repo: "app",
@@ -40,6 +44,7 @@ export const groups = [
         branch: "2.x",
         en: "Application skeleton with the modern directory layout",
         ja: "モダンなディレクトリ構成のアプリケーションスケルトン",
+        plugin: false,
       },
       {
         repo: "bake",
