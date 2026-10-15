@@ -249,6 +249,26 @@ fine-grained personal access token for the `pieceofcake2` organization with
 secret, the workflow is skipped. It can also be started by hand from the
 Actions tab (**Run workflow**).
 
+### Japanese Translation
+
+A plugin can add a Japanese translation of its documentation in `docs/ja/`, with the same
+file names as the English pages:
+
+```text
+docs/
+├── README.md        # English home page
+├── cache.md
+└── ja/
+    ├── README.md    # Japanese home page
+    └── cache.md
+```
+
+When `docs/ja/README.md` exists, the site gets a Japanese version at
+`https://pieceofcake2.github.io/<repo>/ja/`, with a language switcher, the Japanese header menu
+of the book, a sidebar built from the Japanese pages in the same way, and Japanese labels.
+`llms.txt` and `llms-full.txt` are written for each language (`ja/llms.txt`). Links from
+`docs/ja/` to files of the repository go one level further up, e.g. `../../LICENSE`.
+
 ## Markdown for AI Tools
 
 Every site built with the skeleton (the book, the plugin documentation sites

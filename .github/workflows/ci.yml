@@ -35,6 +35,8 @@ jobs:
     - name: Validate plugin configuration
       run: |
         printf '# Example\n\nSee [LICENSE](../LICENSE).\n\n## Usage\n\nText.\n' > docs/README.md
+        mkdir -p docs/ja
+        printf '# 例\n\n[LICENSE](../../LICENSE) を参照してください。\n\n## 使い方\n\n本文。\n' > docs/ja/README.md
         cp config.plugin.js config.js
         npm run docs:build
       env:
