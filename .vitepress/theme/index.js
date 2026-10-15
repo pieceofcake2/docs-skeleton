@@ -36,8 +36,11 @@ export default {
       'doc-top': () => h(VersionBanner, { placement: 'doc' }),
       'page-top': () => h(VersionBanner, { placement: 'page' }),
       'home-hero-before': () => h(VersionBanner, { placement: 'home' }),
-      // Links to the Markdown of the page (its .md version and its source)
+      // Links to the Markdown of the page (its .md version and its source),
+      // on the row of the "Edit this page" link. `doc-after` covers a page
+      // without a doc footer.
       'doc-footer-before': () => h(MarkdownLinks),
+      'doc-after': () => h(MarkdownLinks, { standalone: true }),
     })
   },
   enhanceApp({ router }) {

@@ -211,8 +211,9 @@ files in the `buildEnd` hook; it needs no extra dependency.
   to their `.md` URL, and links to other files of the repository (examples,
   `../LICENSE`, images) point to the file on GitHub.
 - Every page has `<link rel="alternate" type="text/markdown">` in its head and
-  "View as Markdown" and "View source on GitHub" links above the footer. The
-  GitHub link is derived from `themeConfig.editLink.pattern`.
+  "Markdown" and "Source" links (ja: 「Markdown」「ソース」) in the doc footer,
+  on the same row as "Edit this page on GitHub". The Source link points to the
+  page on GitHub and is derived from `themeConfig.editLink.pattern`.
 - A page is left out when its front matter has `llms: false`, or when it only
   redirects to another page (`http-equiv: refresh` in `head`).
 - `config.js` can set `markdownOutput: false` to turn this off, or pass
