@@ -284,6 +284,16 @@ Auto-fix linting issues:
 npm run lint:fix
 ```
 
+## Origin
+
+This package is a maintained fork of
+[cakephp/docs-skeleton](https://github.com/cakephp/docs-skeleton) (not published on Packagist, last
+upstream commit [`f256691`](https://github.com/cakephp/docs-skeleton/commit/f256691) on `main`),
+originally by the CakePHP community (Cake Software Foundation, Inc.). It is maintained for CakePHP 2
+on modern PHP by [pieceofcake2](https://github.com/pieceofcake2). Changes from the original are
+listed in the
+[commit history since the fork](https://github.com/pieceofcake2/docs-skeleton/compare/f256691...main).
+
 ## License
 
 Licensed under The MIT License. For full copyright and license information, please see the [LICENSE](LICENSE) file.
