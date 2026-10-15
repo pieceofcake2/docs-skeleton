@@ -1,0 +1,75 @@
+# Rebuilds every documentation site when the skeleton changes, so the header
+# menu, the theme and the top page's package list and sitemap index stay the
+# same on all sites. The sites are the top page (pieceofcake2.github.io) and
+# every repository in .vitepress/packages.js; a plugin added there is picked up
+# without changing this workflow.
+#
+# Starting a workflow in another repository needs a token: the organization
+# secret DOCS_DISPATCH_TOKEN, a fine-grained personal access token (or GitHub
+# App token) for the pieceofcake2 organization with "Actions: Read and write"
+# on the documentation repositories. Without it the job is skipped.
+name: Redeploy sites
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - '**.md'
+      - '.github/workflows/ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+  redeploy:
+    if: github.repository_owner == 'pieceofcake2'
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.DOCS_DISPATCH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - name: Start the deploy workflow of every site
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::notice::DOCS_DISPATCH_TOKEN is not set; the sites are not rebuilt."
+            exit 0
+          fi
+
+          # The repository of each site, from the URL of its documentation
+          # (https://pieceofcake2.github.io/<repo>/; the book is in "docs").
+          repos=$(node --input-type=module -e '
+            const { groups, docsUrl } = await import("./.vitepress/packages.js")
+            const items = groups.flatMap((g) => g.items ?? g.categories.flatMap((c) => c.items))
+            const repos = items.map((item) => new URL(docsUrl(item)).pathname.split("/")[1])
+            console.log(["pieceofcake2.github.io", ...new Set(repos)].join("\n"))
+          ')
+
+          failed=0
+          for repo in $repos; do
+            # The book and the top page deploy with deploy.yml, plugins with docs.yml.
+            workflow=docs.yml
+            if gh api "repos/pieceofcake2/$repo/contents/.github/workflows/deploy.yml" --silent 2>/dev/null; then
+              workflow=deploy.yml
+            fi
+            branch=$(gh api "repos/pieceofcake2/$repo" --jq .default_branch)
+            if gh workflow run "$workflow" -R "pieceofcake2/$repo" --ref "$branch"; then
+              echo "- \`$repo\`: $workflow started on $branch" >> "$GITHUB_STEP_SUMMARY"
+            else
+              echo "::error::Could not start $workflow of pieceofcake2/$repo"
+              echo "- \`$repo\`: **failed** to start $workflow" >> "$GITHUB_STEP_SUMMARY"
+              failed=1
+            fi
+          done
+          exit $failed
