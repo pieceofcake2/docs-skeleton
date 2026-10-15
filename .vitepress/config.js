@@ -73,6 +73,30 @@ mergedConfig.markdown.config = (md) => {
   overrideMarkdownConfig?.(md)
 }
 
+// Google Tag Manager on every site. `gtm: false` turns it off; a string sets another container ID.
+const gtmId = mergedConfig.gtm === undefined ? 'GTM-K65X9K86' : mergedConfig.gtm
+delete mergedConfig.gtm
+
+if (gtmId) {
+  mergedConfig.head = [
+    ...(mergedConfig.head || []),
+    ['script', {}, `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','${gtmId}');`],
+  ]
+
+  const overrideTransformHtml = mergedConfig.transformHtml
+  mergedConfig.transformHtml = async (code, id, context) => {
+    const html = (await overrideTransformHtml?.(code, id, context)) ?? code
+    return html.replace(
+      /<body([^>]*)>/,
+      `<body$1><noscript><iframe src="https://www.googletagmanager.com/ns.html?id=${gtmId}" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>`,
+    )
+  }
+}
+
 // Markdown version of every page, llms.txt and llms-full.txt for AI tools
 // (see markdown-output.js). `markdownOutput: false` turns it off; an object
 // passes options (`transform`, `llmsTxt`).
