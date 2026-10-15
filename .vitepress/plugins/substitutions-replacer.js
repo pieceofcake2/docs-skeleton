@@ -11,7 +11,7 @@
 * @param {string} format - Format type: 'bold', 'italic', 'code', or 'none'
 * @returns {string} Formatted value
 */
-function formatValue(value, format = 'none') {
+export function formatValue(value, format = 'none') {
   switch (format) {
     case 'bold':
       return `**${value}**`

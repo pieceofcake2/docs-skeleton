@@ -10,6 +10,7 @@ with the following changes:
 - Piece of Cake 2 logo, favicons and footer
 - Analytics (Simple Analytics, Google Analytics) removed
 - `::: pieceofcake2` container to mark content specific to the pieceofcake2 forks
+- Markdown version of every page, `llms.txt` and `llms-full.txt` for AI tools
 
 ```md
 ::: pieceofcake2
@@ -186,6 +187,41 @@ DOCS_REPOSITORY=pieceofcake2/debug_kit DOCS_BRANCH=2.x DOCS_SOURCE=../debug_kit 
 npm run docs:preview
 ```
 
+## Markdown for AI Tools
+
+Every site built with the skeleton (the book, the plugin documentation sites
+and the top page) also publishes its pages as Markdown, so that AI tools can
+read them without parsing HTML. `.vitepress/markdown-output.js` writes the
+files in the `buildEnd` hook; it needs no extra dependency.
+
+| File | URL (book) | URL (plugin site) |
+| --- | --- | --- |
+| Markdown of a page, next to its `.html` | `/docs/installation.md` | `/<repo>/configuration.md` |
+| Markdown of a directory page (`.../`) | `/docs/index.md`, `/docs/security/index.md` | `/<repo>/index.md` |
+| Index of the pages ([llms.txt](https://llmstxt.org/)) | `/docs/llms.txt`, `/docs/ja/llms.txt` | `/<repo>/llms.txt` |
+| All pages in one file | `/docs/llms-full.txt`, `/docs/ja/llms-full.txt` | `/<repo>/llms-full.txt` |
+
+- Each locale gets its own `llms.txt` and `llms-full.txt` at its root (the
+  book: English at `/docs/`, Japanese at `/docs/ja/`). `llms.txt` lists the
+  pages grouped like the sidebar; pages that are not in the sidebar follow
+  under "Other pages".
+- The Markdown is the source of the page with the front matter removed,
+  `<!--@include: ...-->` and text substitutions resolved, and Vue `<script>`
+  and `<style>` blocks removed. Links are made absolute: links to pages point
+  to their `.md` URL, and links to other files of the repository (examples,
+  `../LICENSE`, images) point to the file on GitHub.
+- Every page has `<link rel="alternate" type="text/markdown">` in its head and
+  "View as Markdown" and "View source on GitHub" links above the footer. The
+  GitHub link is derived from `themeConfig.editLink.pattern`.
+- A page is left out when its front matter has `llms: false`, or when it only
+  redirects to another page (`http-equiv: refresh` in `head`).
+- `config.js` can set `markdownOutput: false` to turn this off, or pass
+  `markdownOutput: { transform(content, { route, locale }), llmsTxt(locale) }`
+  to change the Markdown of a page or append Markdown to `llms.txt`. The top
+  page uses them to replace its `<PackageList>` component with
+  `packageListMarkdown()` (passed to a `config.js` function, like `bookNav`),
+  which also lists the `llms.txt` of every documentation site.
+
 ## Writing Documentation
 
 ### Content Location
@@ -225,6 +261,7 @@ This plugin requires PHP |phpversion| or higher (minimum |minphpversion|).
 │   ├── book-nav.js       # Header menu of the book, shared with plugin sites
 │   ├── packages.js       # Packages of the "Plugins" menu and the top page
 │   ├── utils.js          # Utility functions
+│   ├── markdown-output.js # Markdown version of the pages, llms.txt (buildEnd)
 │   ├── theme/            # Custom theme components
 │   └── plugins/          # Markdown-it plugins
 ├── docs/                 # Documentation content (markdown files)
