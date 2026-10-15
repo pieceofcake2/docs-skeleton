@@ -234,6 +234,21 @@ DOCS_REPOSITORY=pieceofcake2/debug_kit DOCS_BRANCH=2.x DOCS_SOURCE=../debug_kit 
 npm run docs:preview
 ```
 
+### Rebuilding All Sites
+
+A plugin's site is rebuilt when its `docs/` change. When the skeleton changes
+(theme, header menu, `.vitepress/packages.js`), the workflow
+`.github/workflows/redeploy-sites.yml` starts the deploy workflow of the top
+page and of every repository in `.vitepress/packages.js` (the book and the
+plugins), so all sites get the change. A plugin added to `packages.js` is
+included automatically, and the top page's sitemap index then lists it.
+
+The workflow needs the organization secret `DOCS_DISPATCH_TOKEN`: a
+fine-grained personal access token for the `pieceofcake2` organization with
+**Actions: Read and write** on the documentation repositories. Without the
+secret, the workflow is skipped. It can also be started by hand from the
+Actions tab (**Run workflow**).
+
 ## Markdown for AI Tools
 
 Every site built with the skeleton (the book, the plugin documentation sites
