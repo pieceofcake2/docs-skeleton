@@ -17,12 +17,10 @@ default = true
 
 # Plugins. PHP_CodeSniffer and PHPStan run in the CI workflow with the CakePHP 2 standard and
 # extension, which Qlty cannot load. editorconfig-checker is not used: PHP_CodeSniffer checks the
-# PHP files, and the checker applies the PHP indentation to Markdown and XML.
+# PHP files, and the checker applies the PHP indentation to Markdown and XML. ESLint runs in the CI
+# workflow (lint job) with the packages of eslint.config.js, which Qlty does not install.
 [[plugin]]
 name = "actionlint"
-
-[[plugin]]
-name = "eslint"
 
 [[plugin]]
 name = "osv-scanner"

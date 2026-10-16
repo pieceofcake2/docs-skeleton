@@ -149,6 +149,7 @@ export const groups = [
             en: "CAPTCHA widget and server-side verification with Cloudflare Turnstile, Google reCAPTCHA v2/v3 or hCaptcha",
             ja: "CAPTCHA ウィジェットの表示とサーバー側での検証。Cloudflare Turnstile、Google reCAPTCHA v2/v3、hCaptcha に対応",
           },
+          { repo: "purifiable", package: "pieceofcake2/purifiable", branch: "1.x", en: "HTML sanitization of model fields with HTML Purifier", ja: "HTML Purifier によるモデルのフィールドの HTML サニタイズ" },
         ],
       },
       {
@@ -164,6 +165,8 @@ export const groups = [
         items: [
           { repo: "authenticate", package: "pieceofcake2/authenticate", branch: "1.x", en: "Authentication classes", ja: "認証クラス" },
           { repo: "acl_extras", package: "pieceofcake2/acl_extras", branch: "2.x", en: "Console tools for managing ACL tables", ja: "ACL テーブルを管理するコンソールツール" },
+          { repo: "acl_menu", package: "pieceofcake2/acl_menu", branch: "1.x", en: "Navigation menus of the actions allowed by ACL", ja: "ACL で許可されたアクションのナビゲーションメニュー" },
+          { repo: "totp", package: "pieceofcake2/totp", branch: "1.x", en: "Two-factor authentication with one-time passwords (TOTP)", ja: "ワンタイムパスワード (TOTP) による 2 要素認証" },
         ],
       },
       {
