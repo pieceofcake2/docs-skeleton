@@ -126,7 +126,10 @@ export default ({ bookNav }) => ({
 ```
 
 The packages of the "Plugins" dropdown come from `.vitepress/packages.js`, which
-the top page also uses for its package list. When a repository is added, add it
+the top page also uses for its package list. The Japanese menu (`locale: 'ja'`)
+and the Japanese top page link the Japanese pages (`<site>/ja/`) of every site;
+give a package `locales: ["en"]` there while its documentation has no Japanese
+translation. When a repository is added, add it
 there and to the book's
 [Maintained Plugins](https://pieceofcake2.github.io/docs/plugins/maintained-plugins.html)
 page.
