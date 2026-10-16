@@ -43,13 +43,13 @@ function pluginGroups({ locale, current }) {
 
   const entry = (item) => {
     if (item.repo === current) {
-      // This site: a link within it, highlighted on every page.
-      return { text: shortName(item), link: '/', activeMatch: '^/' }
+      // This site: a link within it (to the home page of this language),
+      // highlighted on every page.
+      return { text: shortName(item), link: `/${prefix}`, activeMatch: '^/' }
     }
 
-    const url = docsUrl(item)
-
-    return { text: shortName(item), ...sameOrigin(url === bookUrl ? `${bookUrl}${prefix}` : url) }
+    // The Japanese menu links the Japanese pages of the sites that have them.
+    return { text: shortName(item), ...sameOrigin(docsUrl(item, lang)) }
   }
 
   return groups

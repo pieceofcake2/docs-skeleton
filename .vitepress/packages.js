@@ -12,8 +12,13 @@
  * - branch:   default branch of the repository, for links to the Markdown of
  *             the documentation on GitHub
  * - docs:     documentation site; defaults to https://pieceofcake2.github.io/<repo>/
- * - markdown: Markdown of the documentation home page on GitHub; defaults to
- *             docs/README.md of the repository
+ * - markdown: Markdown of the documentation home page on GitHub, per language
+ *             ({ en, ja }); defaults to docs/README.md (docs/ja/README.md in
+ *             Japanese) of the repository
+ * - locales:  languages of the documentation; defaults to ["en", "ja"]. The
+ *             Japanese pages are at <docs>ja/ (built from docs/ja/). Set
+ *             ["en"] for a site without a Japanese translation, so that links
+ *             from Japanese pages go to the English site
  * - en / ja:  short description
  * - plugin:   false for repositories that are not plugins (the framework and
  *             the application skeleton); they are left out of the "Plugins"
@@ -33,7 +38,10 @@ export const groups = [
         package: "pieceofcake2/cakephp",
         branch: "2.x",
         docs: "https://pieceofcake2.github.io/docs/",
-        markdown: "https://github.com/pieceofcake2/docs/blob/2.x/docs/en/index.md",
+        markdown: {
+          en: "https://github.com/pieceofcake2/docs/blob/2.x/docs/en/index.md",
+          ja: "https://github.com/pieceofcake2/docs/blob/2.x/docs/ja/index.md",
+        },
         en: "The CakePHP 2.x framework",
         ja: "CakePHP 2.x フレームワーク",
         plugin: false,
@@ -197,16 +205,35 @@ export const groups = [
   },
 ];
 
-export const docsUrl = (item) => item.docs ?? `https://pieceofcake2.github.io/${item.repo}/`;
+const DEFAULT_LOCALES = ["en", "ja"];
+
+/** Whether the documentation of the package is available in the language. */
+export const hasLocale = (item, lang = "en") => lang === "en" || (item.locales ?? DEFAULT_LOCALES).includes(lang);
+
+/**
+ * Documentation site of the package: the Japanese pages for 'ja' when the
+ * site has them, the English pages otherwise.
+ */
+export const docsUrl = (item, lang = "en") => {
+  const site = item.docs ?? `https://pieceofcake2.github.io/${item.repo}/`;
+
+  return lang !== "en" && hasLocale(item, lang) ? `${site}${lang}/` : site;
+};
 export const githubUrl = (item) => `https://github.com/pieceofcake2/${item.repo}`;
 export const packagistUrl = (item) => `https://packagist.org/packages/${item.package}`;
 export const badgeUrl = (item) => `https://img.shields.io/packagist/v/${item.package}?label=Packagist&color=d33c43`;
-export const markdownUrl = (item) => item.markdown ?? `https://github.com/pieceofcake2/${item.repo}/blob/${item.branch}/docs/README.md`;
+export const markdownUrl = (item, lang = "en") => {
+  const locale = hasLocale(item, lang) ? lang : "en";
+
+  return item.markdown?.[locale] ??
+    `https://github.com/pieceofcake2/${item.repo}/blob/${item.branch}/docs/${locale === "en" ? "" : `${locale}/`}README.md`;
+};
 
 /**
  * The package list as Markdown, for the Markdown version of the top page and
  * its llms.txt: every package with its documentation site, the Markdown of the
- * documentation on GitHub and the llms.txt of the site.
+ * documentation on GitHub and the llms.txt of the site, in the language of the
+ * page where the documentation has it.
  *
  * @param {string} lang 'en' or 'ja'
  * @param {object} [options]
@@ -221,9 +248,9 @@ export function packageListMarkdown(lang = "en", { level = 3 } = {}) {
     const categories = group.categories ?? [{ items: group.items }];
     const lists = categories.map((category) => {
       const items = category.items.map((item) => {
-        const site = docsUrl(item);
+        const site = docsUrl(item, lang);
 
-        return `- [${item.package}](${site}) - ${t(item)} ([Markdown](${markdownUrl(item)}), [llms.txt](${site}llms.txt))`;
+        return `- [${item.package}](${site}) - ${t(item)} ([Markdown](${markdownUrl(item, lang)}), [llms.txt](${site}llms.txt))`;
       });
 
       return [category.en ? `${hashes}# ${t(category)}` : "", items.join("\n")].filter(Boolean).join("\n\n");
