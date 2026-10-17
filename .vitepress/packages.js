@@ -110,6 +110,13 @@ export const groups = [
         en: "A4 PDF reports printed by a headless Chrome, for Panther and the security checks",
         ja: "ヘッドレス Chrome で印刷する A4 の PDF の報告書。Panther とセキュリティ診断で使用",
       },
+    ],
+  },
+  {
+    id: "security",
+    en: "Security",
+    ja: "セキュリティ",
+    items: [
       {
         repo: "security-check",
         package: "pieceofcake2/security-check",
