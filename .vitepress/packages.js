@@ -145,6 +145,13 @@ export const groups = [
         en: "Scan of the running application with OWASP ZAP, as a PDF report",
         ja: "OWASP ZAP による動いているアプリケーションのスキャンを PDF の報告書に",
       },
+      {
+        repo: "security-headers",
+        package: "pieceofcake2/security-headers",
+        branch: "1.x",
+        en: "The security headers of every response, with a Content Security Policy that allows other sites and Google's tags by name",
+        ja: "すべてのレスポンスにセキュリティヘッダーを付ける。ほかのサイトや Google のタグを名前で許可できる Content Security Policy",
+      },
     ],
   },
   {
