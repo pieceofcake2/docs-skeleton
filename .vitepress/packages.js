@@ -238,6 +238,7 @@ export const groups = [
         ja: "ファイル",
         items: [
           { repo: "upload", package: "pieceofcake2/upload", branch: "2.x", en: "File upload handling", ja: "ファイルアップロードの処理" },
+          { repo: "filebinder", package: "pieceofcake2/filebinder", branch: "2.x", en: "File attachment for model records, stored in a local directory, in the database or on Amazon S3", ja: "モデルのレコードへのファイルの添付。ローカルのディレクトリ、データベース、Amazon S3 に保存" },
           { repo: "imagine", package: "pieceofcake2/imagine", branch: "1.x", en: "Image processing library wrapper", ja: "画像処理ライブラリのラッパー" },
           { repo: "image", package: "pieceofcake2/image", branch: "1.x", en: "Validation of uploaded images by their contents (JPEG, PNG, GIF, WebP and SVG)", ja: "アップロードされた画像の中身による検証 (JPEG、PNG、GIF、WebP、SVG)" },
           { repo: "cakepdf", package: "pieceofcake2/cakepdf", branch: "1.x", en: "PDF generation", ja: "PDF の生成" },
