@@ -3,7 +3,7 @@ import PageLoader from "./components/PageLoader.vue";
 import VersionBanner from "./components/VersionBanner.vue";
 import MarkdownLinks from "./components/MarkdownLinks.vue";
 import MovedAnchor from "./components/MovedAnchor.vue";
-import { groups } from '../packages.js'
+import { groups, siteUrl } from '../packages.js'
 import './custom.css'
 import { h } from "vue";
 
@@ -14,7 +14,7 @@ const sitePrefixes = [
   '/docs/',
   ...groups
     .flatMap((group) => group.items ?? (group.categories ?? []).flatMap((category) => category.items))
-    .map((item) => `/${item.repo}/`),
+    .map((item) => new URL(siteUrl(item)).pathname),
 ]
 
 const isOtherSite = (pathname, base) => {
