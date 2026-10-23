@@ -12,6 +12,9 @@
  * - branch:   default branch of the repository, for links to the Markdown of
  *             the documentation on GitHub
  * - docs:     documentation site; defaults to https://pieceofcake2.github.io/<repo>/
+ * - page:     page of the documentation site that documents the package, when
+ *             the package has no site of its own (e.g. "installation/foo.html"
+ *             of the book); the same path in every language
  * - markdown: Markdown of the documentation home page on GitHub, per language
  *             ({ en, ja }); defaults to docs/README.md (docs/ja/README.md in
  *             Japanese) of the repository
@@ -50,8 +53,28 @@ export const groups = [
         repo: "app",
         package: "pieceofcake2/app",
         branch: "2.x",
-        en: "Application skeleton with the modern directory layout",
-        ja: "モダンなディレクトリ構成のアプリケーションスケルトン",
+        docs: "https://pieceofcake2.github.io/docs/",
+        page: "installation/application-skeleton.html",
+        markdown: {
+          en: "https://github.com/pieceofcake2/docs/blob/2.x/docs/en/installation/application-skeleton.md",
+          ja: "https://github.com/pieceofcake2/docs/blob/2.x/docs/ja/installation/application-skeleton.md",
+        },
+        en: "Application skeleton with the modern directory layout and namespaced classes",
+        ja: "モダンなディレクトリ構成と名前空間付きのクラスのアプリケーションスケルトン",
+        plugin: false,
+      },
+      {
+        repo: "app-legacy",
+        package: "pieceofcake2/app-legacy",
+        branch: "2.x",
+        docs: "https://pieceofcake2.github.io/docs/",
+        page: "installation/application-skeleton-legacy.html",
+        markdown: {
+          en: "https://github.com/pieceofcake2/docs/blob/2.x/docs/en/installation/application-skeleton-legacy.md",
+          ja: "https://github.com/pieceofcake2/docs/blob/2.x/docs/ja/installation/application-skeleton-legacy.md",
+        },
+        en: "Application skeleton with the modern directory layout, global classes and .ctp templates",
+        ja: "モダンなディレクトリ構成で、グローバルなクラスと .ctp のテンプレートのアプリケーションスケルトン",
         plugin: false,
       },
       {
@@ -269,14 +292,22 @@ const DEFAULT_LOCALES = ["en", "ja"];
 export const hasLocale = (item, lang = "en") => lang === "en" || (item.locales ?? DEFAULT_LOCALES).includes(lang);
 
 /**
- * Documentation site of the package: the Japanese pages for 'ja' when the
- * site has them, the English pages otherwise.
+ * Documentation site of the package (its root, also for a package documented
+ * on a page of another site): the Japanese pages for 'ja' when the site has
+ * them, the English pages otherwise. Use it for the files of the site, such as
+ * llms.txt and sitemap.xml.
  */
-export const docsUrl = (item, lang = "en") => {
+export const siteUrl = (item, lang = "en") => {
   const site = item.docs ?? `https://pieceofcake2.github.io/${item.repo}/`;
 
   return lang !== "en" && hasLocale(item, lang) ? `${site}${lang}/` : site;
 };
+
+/**
+ * Documentation of the package, for links: the home page of its site, or the
+ * page of another site that documents it.
+ */
+export const docsUrl = (item, lang = "en") => `${siteUrl(item, lang)}${item.page ?? ""}`;
 export const githubUrl = (item) => `https://github.com/pieceofcake2/${item.repo}`;
 export const packagistUrl = (item) => `https://packagist.org/packages/${item.package}`;
 export const badgeUrl = (item) => `https://img.shields.io/packagist/v/${item.package}?label=Packagist&color=d33c43`;
@@ -306,9 +337,9 @@ export function packageListMarkdown(lang = "en", { level = 3 } = {}) {
     const categories = group.categories ?? [{ items: group.items }];
     const lists = categories.map((category) => {
       const items = category.items.map((item) => {
-        const site = docsUrl(item, lang);
+        const site = siteUrl(item, lang);
 
-        return `- [${item.package}](${site}) - ${t(item)} ([Markdown](${markdownUrl(item, lang)}), [llms.txt](${site}llms.txt))`;
+        return `- [${item.package}](${docsUrl(item, lang)}) - ${t(item)} ([Markdown](${markdownUrl(item, lang)}), [llms.txt](${site}llms.txt))`;
       });
 
       return [category.en ? `${hashes}# ${t(category)}` : "", items.join("\n")].filter(Boolean).join("\n\n");
